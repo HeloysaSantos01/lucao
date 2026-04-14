@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>As Escolhas de Chapeuzinho</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #2c3e50;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #game-container {
+            background-color: #fffaf0;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            max-width: 550px;
+            width: 90%;
+            text-align: center;
+            border: 4px solid #c0392b;
+        }
+
+        h1 { color: #c0392b; margin-top: 0; }
+        
+        #story-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            min-height: 100px;
+        }
+
+        .choices-flex {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        button {
+            padding: 15px 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .reset-btn { background-color: #7f8c8d; }
+        .reset-btn:hover { background-color: #95a5a6; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <h1>Chapeuzinho Vermelho</h1>
+    <div id="story-content">
+        <p id="story-text">Sua mãe lhe entrega uma cesta com doces para a vovozinha. Ao sair de casa, você encontra uma bifurcação na floresta. O que você faz?</p>
+        
+        <div id="choices-container" class="choices-flex">
+            </div>
+    </div>
+</div>
+
+<script>
+    const storyData = {
+        inicio: {
+            text: "Sua mãe lhe entrega uma cesta com doces para a vovozinha. Ao sair de casa, você encontra uma bifurcação na floresta. O que você faz?",
+            choices: [
+                { text: "Seguir pelo caminho florido (mais longo)", target: "flores" },
+                { text: "Cortar caminho pela trilha escura (mais rápido)", target: "trilha_escura" }
+            ]
+        },
+        flores: {
+            text: "O caminho é lindo e seguro! Você se diverte colhendo margaridas. No entanto, você demora muito e escurece. Alguém te observa atrás das árvores...",
+            choices: [
+                { text: "Correr para a casa da vovó", target: "casa_vovo_segura" },
+                { text: "Perguntar 'Quem está aí?'", target: "lobo_conversa" }
+            ]
+        },
+        trilha_escura: {
+            text: "Você entra na mata fechada. De repente, um Lobo elegante aparece e pergunta para onde você está indo com tanta pressa.",
+            choices: [
+                { text: "Contar que vai para a casa da vovó", target: "lobo_mentira" },
+                { text: "Ignorar o Lobo e continuar andando", target: "lobo_ignora" }
+            ]
+        },
+        casa_vovo_segura: {
+            text: "Você chega cansada, mas segura! A vovó fica feliz com os doces e as flores. Vocês tomam chá e o Lobo nem teve chance. Parabéns!",
+            choices: [{ text: "Jogar novamente", target: "inicio", isReset: true }]
+        },
+        lobo_conversa: {
+            text: "Era apenas um esquilo! Mas o susto te fez correr e você chegou na vovó a tempo de ver o Lobo tentando entrar pela janela. Você chama o caçador! Fim da linha para o Lobo.",
+            choices: [{ text: "Jogar novamente", target: "inicio", isReset: true }]
+        },
+        lobo_mentira: {
+            text: "O Lobo agradece e sai correndo. Quando você chega na casa da vovó, percebe que ela está com orelhas muito grandes... O Lobo chegou primeiro! Cuidado!",
+            choices: [{ text: "Tentar fugir", target: "fim_ruim" }]
+        },
+        lobo_ignora: {
+            text: "O Lobo fica ofendido, mas desiste de te seguir. Você chega na vovó, mas esqueceu a cesta no caminho com o susto! Pelo menos você está viva.",
+            choices: [{ text: "Jogar novamente", target: "inicio", isReset: true }]
+        },
+        fim_ruim: {
+            text: "O Lobo salta da cama! Por sorte, um caçador que passava por perto ouviu seus gritos e salvou o dia. Que susto!",
+            choices: [{ text: "Tentar um caminho melhor", target: "inicio", isReset: true }]
+        }
+    };
+
+    function updatePage(sceneKey) {
+        const scene = storyData[sceneKey];
+        const textElement = document.getElementById('story-text');
+        const choicesContainer = document.getElementById('choices-container');
+
+        // Atualiza o texto com efeito simples
+        textElement.innerText = scene.text;
+
+        // Limpa botões antigos
+        choicesContainer.innerHTML = '';
+
+        // Cria novos botões
+        scene.choices.forEach(choice => {
+            const button = document.createElement('button');
+            button.innerText = choice.text;
+            if (choice.isReset) button.classList.add('reset-btn');
+            
+            button.onclick = () => updatePage(choice.target);
+            choicesContainer.appendChild(button);
+        });
+    }
+
+    // Inicia o jogo
+    updatePage('inicio');
+</script>
+
+</body>
+</html>
